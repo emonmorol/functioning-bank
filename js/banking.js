@@ -21,28 +21,39 @@ function updateTotalValue(inputAddres,amount){
     const previousTotal = parseFloat(totalText);
     totalElement.innerText = previousTotal + amount;
 }
-
-//Handle DEposite Button
-document.getElementById('deposite-button').addEventListener('click',function(){
-    //get deposite input
-    const depositeAmount = getInputValue('deposite-input');
-    // get current deposite
-    updateTotalValue('deposite-total',depositeAmount);
-    //update total balance
+function getCurrentBalance(){
     const totalBalance = document.getElementById('total-balance');
     const totalBalanceText = totalBalance.innerText;
     const previousTotalBalance = parseFloat(totalBalanceText);
-    totalBalance.innerText = previousTotalBalance + depositeAmount; 
+    return previousTotalBalance;
+}
+function updateBalance(amount,isAdd){
+    const totalBalance = document.getElementById('total-balance');
+    const previousTotalBalance = getCurrentBalance();
+    if(isAdd == true){
+        totalBalance.innerText = previousTotalBalance + amount; 
+    }
+    else{
+        totalBalance.innerText = previousTotalBalance - amount; 
+
+    }
+}
+
+//Handle DEposite Button
+document.getElementById('deposite-button').addEventListener('click',function(){
+    const depositeAmount = getInputValue('deposite-input');
+    if(depositeAmount > 0 ){
+    updateTotalValue('deposite-total',depositeAmount);
+    updateBalance(depositeAmount,true);
+    }
 })
 
 // Handle Withdraw Button
 document.getElementById('withdraw-button').addEventListener('click',function(){
-    //get withdraw input
     const withdrawAmount = getInputValue('withdraw-input');
-    updateTotalValue('withdraw-total',withdrawAmount);
-    //Update total Balance 
-    const totalBalance = document.getElementById('total-balance');
-    const totalBalanceText = totalBalance.innerText;
-    const previousTotalBalance = parseFloat(totalBalanceText);
-    totalBalance.innerText = previousTotalBalance - withdrawAmount;
+    const currentBalance = getCurrentBalance();
+    if(withdrawAmount > 0 && withdrawAmount <= currentBalance){
+        updateTotalValue('withdraw-total',withdrawAmount);
+        updateBalance(withdrawAmount,false);
+    }
 })
